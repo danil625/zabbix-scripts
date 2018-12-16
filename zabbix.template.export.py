@@ -59,7 +59,7 @@ class ZabbixTemplates:
       
       if args.templates != 'All':
         request_args.filter = {
-          "host": [args.tempaltes]
+          "host": [args.templates]
         }
       
       result = self.zapi.do_request('template.get',request_args)
@@ -74,7 +74,7 @@ class ZabbixTemplates:
           
     def exportTemplate(self,tid,oput):
       
-      print "tempalteid:",tid," output:",oput
+      print "templateid:",tid," output:",oput
       args = {
         "options": {
             "templates": [tid]
