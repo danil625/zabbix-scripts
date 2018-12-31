@@ -6,12 +6,14 @@ import time
 import os
 import json
 import xml.dom.minidom
+import re
 from zabbix.api import ZabbixAPI
 from sys import exit
 from datetime import datetime
 
 parser = argparse.ArgumentParser(description='This is a simple tool to export zabbix templates for backup. Please note it will always set the data on export to 1/1/2016 so git wont update unless something substantial happens.')
-parser.add_argument('--templates', help='Name of specific template to export',default='All')
+parser.add_argument('--templates', help='Names of specific templates to export, separated by comma (,)',default='All')
+parser.add_argument('--groupids', help='Group IDs (HostGroup) of templates to export, separated by comma (,). Must be numeric ID.')
 parser.add_argument('--out-dir', help='Directory to output templates to.',default='./templates')
 parser.add_argument('--debug', help='Enable debug mode, this will show you all the json-rpc calls and responses', action="store_true")
 parser.add_argument('--url', help='URL to the zabbix server (example: https://monitor.example.com/zabbix)',required = True)
@@ -54,17 +56,19 @@ class ZabbixTemplates:
 
     def exportTemplates(self,args):
       request_args = {
-      	"output": "extend"
+        "output": "extend",
+        "filter": {}
       }
       
       if args.templates != 'All':
-        request_args.filter = {
-          "host": [args.templates]
-        }
+        request_args["filter"]["host"] = re.sub(r",\s*", ",", args.templates).split(",")
+
+      if None != args.groupids :
+        request_args["groupids"] = args.groupids.split(",")
       
       result = self.zapi.do_request('template.get',request_args)
       if not result['result']:
-        print "No matching host found for '{}'".format(hostname)
+        print "No matching host found for '{}' and for group-id '{}'".format(args.templates, args.groupids)
         exit(-3)
       
       if result['result']:

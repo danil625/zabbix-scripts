@@ -164,7 +164,8 @@ usage: zabbix.template.export.py [-h] [--templates TEMPLATES]
 
 optional arguments:
   -h, --help                  Show this help message and exit
-  --templates TEMPLATES       Name of specific template to export
+  --templates TEMPLATES       Name of specific templates to export, separated by comma (,)
+  --groupids GROUPIDS         Group IDs (HostGroup) of templates to export, separated by comma (,). Must be numeric IDs
   --out-dir OUT_DIR           Directory to output templates to.
   --debug                     Enable debug mode, this will show you all the json-rpc calls and responses
   --url URL                   URL to the zabbix server (example: https://monitor.example.com/zabbix )
